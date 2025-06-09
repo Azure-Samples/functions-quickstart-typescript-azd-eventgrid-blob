@@ -1,0 +1,11 @@
+### Test ProcessBlobUpload Function
+### This will trigger the function by simulating a blob upload event
+
+POST http://localhost:7071/admin/functions/ProcessBlobUpload
+Content-Type: application/json
+
+{
+  "name": "Benefit_Options.pdf",
+  "path": "unprocessed-pdf/Benefit_Options.pdf",
+  "contentType": "application/pdf"
+}
