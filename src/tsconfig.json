@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es2020",
-    "outDir": "dist",
+    "outDir": "../dist",
     "rootDir": ".",
     "sourceMap": true,
     "strict": false,
@@ -11,10 +11,10 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "src/**/*"
+    "**/*"
   ],
   "exclude": [
-    "node_modules",
-    "dist"
+    "../node_modules",
+    "../dist"
   ]
 }

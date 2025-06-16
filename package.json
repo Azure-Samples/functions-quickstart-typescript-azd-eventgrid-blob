@@ -4,8 +4,8 @@
   "description": "Azure Functions TypeScript Event Grid Blob Trigger sample using Azure Developer CLI",
   "main": "dist/src/functions/*.js",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
+    "build": "tsc -p src",
+    "watch": "tsc -p src -w",
     "clean": "rimraf dist",
     "prestart": "npm run clean && npm run build",
     "start": "func start",

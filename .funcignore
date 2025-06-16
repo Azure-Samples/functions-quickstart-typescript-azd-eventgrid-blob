@@ -4,7 +4,7 @@
 .vscode
 local.settings.json
 test
-tsconfig.json
+src/tsconfig.json
 .funcignore
 node_modules
 src
