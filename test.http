@@ -1,0 +1,29 @@
+### Test the blob processing function locally
+### Update the port number if needed based on your local Functions host
+POST http://localhost:7071/runtime/webhooks/EventGrid?functionName=processBlobUpload
+Content-Type: application/json
+
+[
+  {
+    "eventType": "Microsoft.Storage.BlobCreated",
+    "subject": "/blobServices/default/containers/unprocessed-pdf/blobs/Benefit_Options.pdf",
+    "eventTime": "2023-01-01T00:00:00.0000000Z",
+    "id": "831e1650-001e-001b-66ab-eeb76e069631",
+    "data": {
+      "api": "PutBlob",
+      "clientRequestId": "6d79dbfb-0e37-4fc4-981f-442c9ca65760",
+      "requestId": "831e1650-001e-001b-66ab-eeb76e000000",
+      "eTag": "0x8D4BCC2E4835CD0",
+      "contentType": "application/pdf",
+      "contentLength": 524288,
+      "blobType": "BlockBlob",
+      "url": "https://mystorageaccount.blob.core.windows.net/unprocessed-pdf/Benefit_Options.pdf",
+      "sequencer": "00000000000004420000000000028963",
+      "storageDiagnostics": {
+        "batchId": "b68529f3-68cd-4744-baa4-3c0498ec19f0"
+      }
+    },
+    "dataVersion": "1.0",
+    "metadataVersion": "1"
+  }
+]
