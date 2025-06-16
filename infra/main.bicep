@@ -80,7 +80,7 @@ module processor 'app/processor.bicep' = {
     applicationInsightsName: monitoring.outputs.name
     appServicePlanId: appServicePlan.outputs.resourceId
     runtimeName: 'node'
-    runtimeVersion: '22'
+    runtimeVersion: '20'
     storageAccountName: storage.outputs.name
     enableBlob: storageEndpointConfig.enableBlob
     enableQueue: storageEndpointConfig.enableQueue
