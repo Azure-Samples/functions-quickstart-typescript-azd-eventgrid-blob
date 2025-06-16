@@ -2,6 +2,29 @@ import { app, InvocationContext } from '@azure/functions';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { DefaultAzureCredential } from '@azure/identity';
 
+// Initialize clients at module level for reuse across function executions
+let blobServiceClient: BlobServiceClient | null = null;
+const credential = new DefaultAzureCredential();
+
+function getBlobServiceClient(): BlobServiceClient {
+    if (!blobServiceClient) {
+        // Get the storage account name from environment variables
+        const storageAccountName = process.env.PDFProcessorSTORAGE__accountName;
+        
+        if (!storageAccountName) {
+            throw new Error('Storage account name not found. Expected PDFProcessorSTORAGE__accountName environment variable.');
+        }
+
+        // Create BlobServiceClient using the storage account URL and managed identity credentials
+        blobServiceClient = new BlobServiceClient(
+            `https://${storageAccountName}.blob.core.windows.net`,
+            credential
+        );
+    }
+    
+    return blobServiceClient;
+}
+
 export async function processBlobUpload(blob: Buffer, context: InvocationContext): Promise<void> {
     const blobName = context.triggerMetadata?.name as string;
     const fileSize = blob.length;
@@ -24,21 +47,8 @@ async function copyToProcessedContainerAsync(blobBuffer: Buffer, blobName: strin
     context.log(`Starting async copy operation for ${blobName}`);
     
     try {
-        // Get the storage account name from environment variables
-        const storageAccountName = process.env.PDFProcessorSTORAGE__accountName;
-        
-        if (!storageAccountName) {
-            throw new Error('Storage account name not found. Expected PDFProcessorSTORAGE__accountName environment variable.');
-        }
-
-        // Create credential using managed identity
-        const credential = new DefaultAzureCredential();
-        
-        // Create BlobServiceClient using the storage account URL and managed identity credentials
-        const blobServiceClient = new BlobServiceClient(
-            `https://${storageAccountName}.blob.core.windows.net`,
-            credential
-        );
+        // Get the reusable BlobServiceClient
+        const blobServiceClient = getBlobServiceClient();
         
         // Get container client for processed PDFs
         const containerClient = blobServiceClient.getContainerClient('processed-pdf');
