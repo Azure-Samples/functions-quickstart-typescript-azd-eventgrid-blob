@@ -1,5 +1,6 @@
 import { app, InvocationContext } from '@azure/functions';
 import { BlobServiceClient } from '@azure/storage-blob';
+import { DefaultAzureCredential } from '@azure/identity';
 
 export async function processBlobUpload(blob: Buffer, context: InvocationContext): Promise<void> {
     const blobName = context.triggerMetadata?.name as string;
@@ -23,15 +24,21 @@ async function copyToProcessedContainerAsync(blobBuffer: Buffer, blobName: strin
     context.log(`Starting async copy operation for ${blobName}`);
     
     try {
-        // Get the storage connection string from environment variables
-        const connectionString = process.env.PDFProcessorSTORAGE || process.env.AzureWebJobsStorage;
+        // Get the storage account name from environment variables
+        const storageAccountName = process.env.PDFProcessorSTORAGE__accountName;
         
-        if (!connectionString) {
-            throw new Error('Storage connection string not found. Expected PDFProcessorSTORAGE or AzureWebJobsStorage environment variable.');
+        if (!storageAccountName) {
+            throw new Error('Storage account name not found. Expected PDFProcessorSTORAGE__accountName environment variable.');
         }
 
-        // Create BlobServiceClient
-        const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
+        // Create credential using managed identity
+        const credential = new DefaultAzureCredential();
+        
+        // Create BlobServiceClient using the storage account URL and managed identity credentials
+        const blobServiceClient = new BlobServiceClient(
+            `https://${storageAccountName}.blob.core.windows.net`,
+            credential
+        );
         
         // Get container client for processed PDFs
         const containerClient = blobServiceClient.getContainerClient('processed-pdf');
