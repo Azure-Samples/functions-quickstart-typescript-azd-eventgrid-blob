@@ -8,18 +8,31 @@ const credential = new DefaultAzureCredential();
 
 function getBlobServiceClient(): BlobServiceClient {
     if (!blobServiceClient) {
-        // Get the storage account name from environment variables
-        const storageAccountName = process.env.PDFProcessorSTORAGE__accountName;
+        // For local development, use the connection string directly
+        const connectionString = process.env.PDFProcessorSTORAGE;
         
-        if (!storageAccountName) {
-            throw new Error('Storage account name not found. Expected PDFProcessorSTORAGE__accountName environment variable.');
+        if (!connectionString) {
+            throw new Error('Storage connection string not found. Expected PDFProcessorSTORAGE environment variable.');
         }
 
-        // Create BlobServiceClient using the storage account URL and managed identity credentials
-        blobServiceClient = new BlobServiceClient(
-            `https://${storageAccountName}.blob.core.windows.net`,
-            credential
-        );
+        // Check if running locally with Azurite
+        if (connectionString === 'UseDevelopmentStorage=true') {
+            // Use Azurite connection string
+            blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
+        } else {
+            // For production, get the storage account name and use managed identity
+            const storageAccountName = process.env.PDFProcessorSTORAGE__accountName;
+            
+            if (!storageAccountName) {
+                throw new Error('Storage account name not found. Expected PDFProcessorSTORAGE__accountName environment variable.');
+            }
+
+            // Create BlobServiceClient using the storage account URL and managed identity credentials
+            blobServiceClient = new BlobServiceClient(
+                `https://${storageAccountName}.blob.core.windows.net`,
+                credential
+            );
+        }
     }
     
     return blobServiceClient;

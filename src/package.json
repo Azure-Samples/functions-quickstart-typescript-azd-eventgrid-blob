@@ -2,14 +2,15 @@
   "name": "functions-quickstart-typescript-azd-eventgrid-blob",
   "version": "1.0.0",
   "description": "Azure Functions TypeScript Event Grid Blob Trigger sample using Azure Developer CLI",
-  "main": "dist/src/functions/*.js",
+  "main": "dist/functions/*.js",
   "scripts": {
-    "build": "tsc -p src",
-    "watch": "tsc -p src -w",
+    "build": "tsc -p .",
+    "watch": "tsc -p . -w",
     "clean": "rimraf dist",
     "prestart": "npm run clean && npm run build",
     "start": "func start",
-    "test": "echo \"No tests yet...\""
+    "test": "echo \"No tests yet...\"",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "@azure/functions": "^4.0.0",
