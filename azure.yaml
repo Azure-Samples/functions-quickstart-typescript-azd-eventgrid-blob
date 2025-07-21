@@ -17,6 +17,6 @@ hooks:
         continueOnError: false
 services:
   processor:
-    project: ./
+    project: ./src
     language: js
     host: function

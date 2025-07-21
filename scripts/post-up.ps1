@@ -1,10 +1,19 @@
-$tools = @("az")
+$tools = @("az", "azd")
 
 foreach ($tool in $tools) {
   if (!(Get-Command $tool -ErrorAction SilentlyContinue)) {
     Write-Host "Error: $tool command line tool is not available, check pre-requisites in README.md"
     exit 1
   }
+}
+
+Write-Host "Loading azd .env file from current environment"
+foreach ($line in (& azd env get-values)) {
+    if ($line -match "([^=]+)=(.*)") {
+        $key = $matches[1]
+        $value = $matches[2] -replace '^"|"$'
+        [Environment]::SetEnvironmentVariable($key, $value)
+    }
 }
 
 #Get the function blobs_extension key

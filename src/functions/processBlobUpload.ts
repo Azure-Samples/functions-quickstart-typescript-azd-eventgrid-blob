@@ -6,20 +6,26 @@ import { DefaultAzureCredential } from '@azure/identity';
 let blobServiceClient: BlobServiceClient | null = null;
 const credential = new DefaultAzureCredential();
 
-function getBlobServiceClient(): BlobServiceClient {
+function getBlobServiceClient(context: InvocationContext): BlobServiceClient {
     if (!blobServiceClient) {
-        // Get the storage account name from environment variables
-        const storageAccountName = process.env.PDFProcessorSTORAGE__accountName;
+        // For local development, use the connection string directly
+        let connectionString = process.env.PDFProcessorSTORAGE;
         
-        if (!storageAccountName) {
-            throw new Error('Storage account name not found. Expected PDFProcessorSTORAGE__accountName environment variable.');
+        if (!connectionString) {
+            context.error('Storage connection string not found. Expected PDFProcessorSTORAGE__serviceUri environment variable.');
+            connectionString = process.env.PDFProcessorSTORAGE__serviceUri;
         }
-
-        // Create BlobServiceClient using the storage account URL and managed identity credentials
-        blobServiceClient = new BlobServiceClient(
-            `https://${storageAccountName}.blob.core.windows.net`,
-            credential
-        );
+        // Check if running locally with Azurite
+        if (connectionString === 'UseDevelopmentStorage=true') {
+            // Use Azurite connection string
+            blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
+        } else {
+            // Create BlobServiceClient using the storage account URL and managed identity credentials
+            blobServiceClient = new BlobServiceClient(
+                connectionString,
+                credential
+            );
+        }
     }
     
     return blobServiceClient;
@@ -48,7 +54,7 @@ async function copyToProcessedContainerAsync(blobBuffer: Buffer, blobName: strin
     
     try {
         // Get the reusable BlobServiceClient
-        const blobServiceClient = getBlobServiceClient();
+        const blobServiceClient = getBlobServiceClient(context);
         
         // Get container client for processed PDFs
         const containerClient = blobServiceClient.getContainerClient('processed-pdf');

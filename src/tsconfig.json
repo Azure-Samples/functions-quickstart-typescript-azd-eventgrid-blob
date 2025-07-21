@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2020",
-    "outDir": "../dist",
+    "target": "es6",
+    "outDir": "./dist",
     "rootDir": ".",
     "sourceMap": true,
     "strict": false,
@@ -14,7 +14,7 @@
     "**/*"
   ],
   "exclude": [
-    "../node_modules",
-    "../dist"
+    "./node_modules",
+    "./dist"
   ]
 }
