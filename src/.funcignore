@@ -6,7 +6,7 @@ local.settings.json
 test
 src/tsconfig.json
 .funcignore
-src
+src/
 node_modules/@types/
 node_modules/azure-functions-core-tools/
 node_modules/typescript/
