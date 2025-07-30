@@ -1,3 +1,4 @@
+<!-- 
 ---
 page_type: sample
 languages:
@@ -14,7 +15,7 @@ urlFragment: functions-quickstart-typescript-azd-eventgrid-blob
 name: Azure Functions TypeScript Event Grid Blob Trigger using Azure Developer CLI
 description: This template repository contains an Azure Functions reference sample using the Blob trigger with Event Grid source type, written in TypeScript (v4 programming model) and deployed to Azure using the Azure Developer CLI (azd). The sample uses managed identity and a virtual network to make sure deployment is secure by default.
 ---
-<!-- YAML front-matter schema: https://review.learn.microsoft.com/en-us/help/contribute/samples/process/onboarding?branch=main#supported-metadata-fields-for-readmemd -->
+-->
 
 # Azure Functions TypeScript Event Grid Blob Trigger using Azure Developer CLI
 
