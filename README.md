@@ -74,38 +74,7 @@ Create two containers in the local storage emulator called `processed-pdf` and `
 
 2. Use Azure Storage Explorer, or the VS Code Storage Extension to create the containers.
 
-   **Using Azure Storage Explorer:**
-   + Install [Azure Storage Explorer](https://azure.microsoft.com/en-us/products/storage/storage-explorer/#Download-4)
-   + Open Azure Storage Explorer.
-   + Connect to the local emulator by selecting `Attach to a local emulator.`
-   + Navigate to the `Blob Containers` section.
-   + Right-click and select `Create Blob Container.`
-   + Name the containers `processed-pdf` and `unprocessed-pdf`.
-
-   **Using VS Code Storage Extension:**
-   + Install the VS Code [Azure Storage extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurestorage)
-   + Ensure Azurite is running
-   + Click on the Azure extension icon in VS Code
-   + Under `Workspace`, expand `Local Emulator`
-   + Right click on `Blob Containers` and select `Create Blob Container`
-   + Name the containers `processed-pdf` and `unprocessed-pdf`
-
 3. Upload the PDF files from the `data` folder to the `unprocessed-pdf` container.
-
-   **Using Azure Storage Explorer:**
-    + Open Azure Storage Explorer.
-    + Navigate to the `unprocessed-pdf` container.
-    + Click on "Upload" and select "Upload Folder" or "Upload Files."
-    + Choose the `data` folder or the specific PDF files to upload.
-    + Confirm the upload to the `unprocessed-pdf` container.
-
-   **Using VS Code Storage Extension:**
-   + Install the VS Code [Azure Storage extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurestorage)
-   + Ensure Azurite is running
-   + Click on the Azure extension icon in VS Code
-   + Under `Workspace`, expand `Local Emulator`, expand `Blob Containers`
-   + Right click on `unprocessed-pdf` and select `Open in Explorer`
-   + Copy and paste all the pdf files from the `data` folder to it
 
 ## Run your app
 
@@ -146,12 +115,28 @@ The function code for the `processBlobUpload` endpoint is defined in [`processBl
     app.storageBlob('processBlobUpload', {
         path: 'unprocessed-pdf/{name}',
         connection: 'PDFProcessorSTORAGE',
+        extraInputs: [blobInput],
         source: 'EventGrid',
-        handler: processBlobUpload,
+        sdkBinding: true,
+        handler: processBlobUpload
     });
     ```
 
-The `copyToProcessedContainerAsync` method uses the Azure Storage Blob SDK to upload the processed file to the destination blob container.
+An input binding with sdk types is declared as well to provide the container client for the destination of the blob.
+
+    ```typescript
+    const blobInput = input.storageBlob({
+      path: 'processed-pdf',
+      connection: 'PDFProcessorSTORAGE',
+      sdkBinding: true,
+    });
+    ```
+
+The function implementation then uses the container client to upload the input stream to the destination blob container, prepending `processed_` to the incoming file name.
+
+## Verify that the files were copied
+
+Now that you have triggered the function, use the Azure Storage Explorer, or the VS Code Storage Extension, to check that the `processed-pdf` container has the processed file.
 
 ## Deploy to Azure
 

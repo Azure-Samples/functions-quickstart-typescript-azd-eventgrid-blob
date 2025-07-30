@@ -7,16 +7,12 @@ const blobInput = input.storageBlob({
   sdkBinding: true,
 });
 
-export async function processBlobUpload(blob: Buffer,
+export async function processBlobUpload(blob: StorageBlobClient,
     context: InvocationContext): Promise<void> {
-
     const blobName = context.triggerMetadata?.name as string;
-    const fileSize = blob.length;
-    
+    const fileSize = (await blob.blobClient.getProperties()).contentLength;
     context.log(`TypeScript Blob Trigger (using Event Grid) processed blob\n Name: ${blobName} \n Size: ${fileSize} bytes`);
-
     try {
-
         const storageBlobClient = context.extraInputs.get(
             blobInput
         ) as StorageBlobClient;
@@ -24,9 +20,7 @@ export async function processBlobUpload(blob: Buffer,
         if (!storageBlobClient) {
             throw new Error('StorageBlobClient is not available.');
         }
-
-        await storageBlobClient.containerClient.uploadBlockBlob(`processed-${blobName}`, blob, fileSize);
-
+        await storageBlobClient.containerClient.uploadBlockBlob(`processed-${blobName}`, await blob.blobClient.downloadToBuffer(), fileSize);
         context.log(`PDF processing complete for ${blobName}. Blob copied to processed container with new name processed-${blobName}.`);
     } catch (error) {
         context.error(`Error processing blob ${blobName}:`, error);
@@ -39,5 +33,6 @@ app.storageBlob('processBlobUpload', {
     connection: 'PDFProcessorSTORAGE',
     extraInputs: [blobInput],
     source: 'EventGrid',
+    sdkBinding: true,
     handler: processBlobUpload
 });
