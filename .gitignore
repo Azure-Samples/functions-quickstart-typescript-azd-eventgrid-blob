@@ -50,6 +50,10 @@ AzuriteConfig
 __blobstorage__
 __queuestorage__
 __tablestorage__
+.azurite-data
+
+# Mac system files
+.DS_Store
 
 # VS Code
 .vscode/
