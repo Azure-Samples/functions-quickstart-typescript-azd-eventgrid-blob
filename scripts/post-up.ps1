@@ -21,7 +21,7 @@ $blobs_extension=$(az functionapp keys list -n ${env:AZURE_FUNCTION_APP_NAME} -g
 
 # Build the endpoint URL with the function name and extension key and create the event subscription
 # Double quotes added here to allow the az command to work successfully. Quoting inside az command had issues.
-$endpointUrl="""https://" + ${env:AZURE_FUNCTION_APP_NAME} + ".azurewebsites.net/runtime/webhooks/blobs?functionName=Host.Functions.ProcessBlobUpload&code=" + $blobs_extension + """"
+$endpointUrl="""https://" + ${env:AZURE_FUNCTION_APP_NAME} + ".azurewebsites.net/runtime/webhooks/blobs?functionName=Host.Functions.processBlobUpload&code=" + $blobs_extension + """"
 
 $filter="/blobServices/default/containers/" + ${env:UNPROCESSED_PDF_CONTAINER_NAME}
 
