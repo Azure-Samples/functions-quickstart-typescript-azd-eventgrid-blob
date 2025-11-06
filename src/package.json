@@ -13,7 +13,7 @@
     "postinstall": "npm run build"
   },
   "dependencies": {
-    "@azure/functions": "4.7.4-preview",
+    "@azure/functions": "^4.9.0",
     "@azure/functions-extensions-blob": "^0.2.0-preview"
   },
   "devDependencies": {
