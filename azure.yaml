@@ -20,3 +20,4 @@ services:
     project: ./src
     language: js
     host: function
+    remoteBuild: true
