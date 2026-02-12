@@ -18,6 +18,6 @@ hooks:
 services:
   processor:
     project: ./src
-    language: js
+    language: ts
     host: function
     remoteBuild: true
